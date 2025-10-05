@@ -1,7 +1,8 @@
+import { MuxerWorkerResponse } from "@/types/muxer";
 import { v4 as uuidv4 } from "uuid";
 
 let worker: Worker;
-const pending = new Map<string, (value: any) => void>();
+const pending = new Map<string, (value: MuxerWorkerResponse) => void>();
 
 export const getWorker = (): Worker => {
   worker ??= new Worker(new URL("./worker.ts", import.meta.url), {
@@ -24,9 +25,9 @@ export const getWorker = (): Worker => {
   return worker;
 };
 
-export const sendToMuxer = async (
+export const sendToMuxer = async <T = unknown>(
   type: string,
-  payload?: any
+  payload?: T
 ): Promise<MuxerWorkerResponse> => {
   const id = uuidv4();
   console.log("sendToMuxer");
